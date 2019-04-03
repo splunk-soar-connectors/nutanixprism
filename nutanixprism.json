@@ -1,26 +1,28 @@
 {
     "appid": "19b1f9b5-d4a2-44b3-bf9d-bb708095e2f0",
     "name": "Nutanix Prism",
-    "description": "This app implements the virtualization actions for Nutanix Prism",
+    "description": "Nutanix Prism",
     "type": "virtualization",
     "product_vendor": "Nutanix",
-    "logo": "logo_nutanixprism.svg",
-    "logo_dark": "logo_nutanixprism_dark.svg",
+    "logo": "nutanixprism.png",
+    "logo_dark": "nutanixprism_dark.png",
     "product_name": "Prism",
     "product_version_regex": ".*",
     "publisher": "Nutanix",
-    "license": "Copyright (c) Nutanix, 2019",
+    "license": "Copyright (c) Nutanix, 2018",
     "app_version": "1.0.0",
     "utctime_updated": "2018-12-20T17:23:10.393966Z",
     "package_name": "phantom_nutanixprism",
     "main_module": "nutanixprism_connector.pyc",
-    "min_phantom_version": "4.0.1068",
+    "min_phantom_version": "4.1.94",
     "app_wizard_version": "1.0.0",
     "configuration": {
         "username": {
             "description": "Admin Username",
             "data_type": "string",
             "required": true,
+            "value_list": [],
+            "default": "",
             "order": 0
         },
         "password": {
@@ -33,6 +35,8 @@
             "description": "IP or Hostname of CVM",
             "data_type": "string",
             "required": true,
+            "value_list": [],
+            "default": "",
             "order": 2
         }
     },
@@ -41,6 +45,7 @@
             "action": "test connectivity",
             "identifier": "test_connectivity",
             "description": "Validate the asset configuration for connectivity using supplied configuration",
+            "verbose": "",
             "type": "test",
             "read_only": true,
             "parameters": {},
@@ -51,6 +56,7 @@
             "action": "get system info",
             "identifier": "get_system_info",
             "description": "Get information about a VM",
+            "verbose": "",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -60,9 +66,11 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "vm path",
-                        "uuid"
+                        "host name",
+                        "ip"
                     ],
+                    "value_list": [],
+                    "default": "",
                     "order": 0
                 }
             },
@@ -71,8 +79,8 @@
                     "data_path": "action_result.parameter.vm_uuid",
                     "data_type": "string",
                     "contains": [
-                        "vm path",
-                        "uuid"
+                        "host name",
+                        "ip"
                     ],
                     "column_name": "vm_uuid",
                     "column_order": 0
@@ -84,15 +92,7 @@
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.data",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -113,6 +113,7 @@
             "action": "list vms",
             "identifier": "list_vms",
             "description": "Get the list of registered VMs",
+            "verbose": "",
             "type": "investigate",
             "read_only": true,
             "parameters": {},
@@ -124,15 +125,7 @@
                     "column_order": 0
                 },
                 {
-                    "data_path": "action_result.data",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -153,6 +146,7 @@
             "action": "revert vm",
             "identifier": "revert_vm",
             "description": "Revert VM to specified snapshot",
+            "verbose": "",
             "type": "contain",
             "read_only": false,
             "parameters": {
@@ -162,9 +156,10 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "vm path",
-                        "uuid"
+                        "vm path"
                     ],
+                    "value_list": [],
+                    "default": "",
                     "order": 0
                 },
                 "snapshot_uuid": {
@@ -172,6 +167,9 @@
                     "data_type": "string",
                     "required": false,
                     "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
                     "order": 1
                 }
             },
@@ -180,8 +178,7 @@
                     "data_path": "action_result.parameter.vm_uuid",
                     "data_type": "string",
                     "contains": [
-                        "vm path",
-                        "uuid"
+                        "vm path"
                     ],
                     "column_name": "vm_uuid",
                     "column_order": 0
@@ -189,6 +186,7 @@
                 {
                     "data_path": "action_result.parameter.snapshot_uuid",
                     "data_type": "string",
+                    "contains": [],
                     "column_name": "snapshot_uuid",
                     "column_order": 1
                 },
@@ -199,15 +197,7 @@
                     "column_order": 2
                 },
                 {
-                    "data_path": "action_result.data",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -228,6 +218,7 @@
             "action": "snapshot vm",
             "identifier": "snapshot_vm",
             "description": "Take a snapshot of the VM",
+            "verbose": "",
             "type": "investigate",
             "read_only": false,
             "parameters": {
@@ -237,9 +228,10 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "vm path",
-                        "uuid"
+                        "vm path"
                     ],
+                    "value_list": [],
+                    "default": "",
                     "order": 0
                 }
             },
@@ -248,8 +240,7 @@
                     "data_path": "action_result.parameter.vm_uuid",
                     "data_type": "string",
                     "contains": [
-                        "vm path",
-                        "uuid"
+                        "vm path"
                     ],
                     "column_name": "vm_uuid",
                     "column_order": 0
@@ -261,15 +252,7 @@
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.data",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -289,8 +272,8 @@
         {
             "action": "start vm",
             "identifier": "start_vm",
-            "undo": "stop vm",
             "description": "Start a stopped or suspended VM",
+            "verbose": "",
             "type": "correct",
             "read_only": false,
             "parameters": {
@@ -300,9 +283,10 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "vm path",
-                        "uuid"
+                        "vm path"
                     ],
+                    "value_list": [],
+                    "default": "",
                     "order": 0
                 }
             },
@@ -311,8 +295,7 @@
                     "data_path": "action_result.parameter.vm_uuid",
                     "data_type": "string",
                     "contains": [
-                        "vm path",
-                        "uuid"
+                        "vm path"
                     ],
                     "column_name": "vm_uuid",
                     "column_order": 0
@@ -322,14 +305,6 @@
                     "data_type": "string",
                     "column_name": "status",
                     "column_order": 1
-                },
-                {
-                    "data_path": "action_result.data",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.message",
@@ -352,8 +327,8 @@
         {
             "action": "stop vm",
             "identifier": "stop_vm",
-            "undo": "start vm",
             "description": "Stop a VM",
+            "verbose": "",
             "type": "contain",
             "read_only": false,
             "parameters": {
@@ -363,9 +338,10 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "vm path",
-                        "uuid"
+                        "vm path"
                     ],
+                    "value_list": [],
+                    "default": "",
                     "order": 0
                 }
             },
@@ -374,8 +350,7 @@
                     "data_path": "action_result.parameter.vm_uuid",
                     "data_type": "string",
                     "contains": [
-                        "vm path",
-                        "uuid"
+                        "vm path"
                     ],
                     "column_name": "vm_uuid",
                     "column_order": 0
@@ -387,15 +362,7 @@
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.data",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -416,6 +383,7 @@
             "action": "suspend vm",
             "identifier": "suspend_vm",
             "description": "Suspend a VM (Requires guest tools installed on vm)",
+            "verbose": "",
             "type": "contain",
             "read_only": false,
             "parameters": {
@@ -425,9 +393,10 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "vm path",
-                        "uuid"
+                        "vm path"
                     ],
+                    "value_list": [],
+                    "default": "",
                     "order": 0
                 }
             },
@@ -436,8 +405,7 @@
                     "data_path": "action_result.parameter.vm_uuid",
                     "data_type": "string",
                     "contains": [
-                        "vm path",
-                        "uuid"
+                        "vm path"
                     ],
                     "column_name": "vm_uuid",
                     "column_order": 0
@@ -449,15 +417,7 @@
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.data",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -478,6 +438,7 @@
             "action": "search vms",
             "identifier": "search_vms",
             "description": "Query VM's based on string",
+            "verbose": "",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -485,7 +446,10 @@
                     "description": "Query VM's based on string",
                     "data_type": "string",
                     "required": true,
-                    "primary": false,
+                    "primary": true,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
                     "order": 0
                 }
             },
@@ -493,6 +457,7 @@
                 {
                     "data_path": "action_result.parameter.search_string",
                     "data_type": "string",
+                    "contains": [],
                     "column_name": "search_string",
                     "column_order": 0
                 },
@@ -503,15 +468,7 @@
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.data",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -532,6 +489,7 @@
             "action": "list snapshots",
             "identifier": "list_snapshots",
             "description": "List snapshots in a cluster",
+            "verbose": "",
             "type": "investigate",
             "read_only": true,
             "parameters": {},
@@ -543,15 +501,7 @@
                     "column_order": 0
                 },
                 {
-                    "data_path": "action_result.data",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -572,6 +522,7 @@
             "action": "get snapshot info",
             "identifier": "get_snapshot_info",
             "description": "Get information of a specific snapshot",
+            "verbose": "",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -579,7 +530,10 @@
                     "description": "UUID of Snapshot",
                     "data_type": "string",
                     "required": true,
-                    "primary": false,
+                    "primary": true,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
                     "order": 0
                 }
             },
@@ -587,6 +541,7 @@
                 {
                     "data_path": "action_result.parameter.snapshot_uuid",
                     "data_type": "string",
+                    "contains": [],
                     "column_name": "snapshot_uuid",
                     "column_order": 0
                 },
@@ -597,15 +552,7 @@
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.data",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
