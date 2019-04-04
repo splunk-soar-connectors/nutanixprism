@@ -7,8 +7,6 @@ import phantom.app as phantom
 from phantom.base_connector import BaseConnector
 from phantom.action_result import ActionResult
 
-# Usage of the consts file is recommended
-# from nutanixprism_consts import *
 import requests
 import json
 from bs4 import BeautifulSoup
@@ -123,7 +121,10 @@ class NutanixPrismConnector(BaseConnector):
             return RetVal(action_result.set_status(phantom.APP_ERROR, u"Invalid method: {0}".format(method)), resp_json)
 
         # Create a URL to connect to
-        url = "https://" + config['base_url'] + endpoint
+        if self.get_action_identifier() == 'search_vms':
+            url = "https://{0}{1}".format(self._base_url, endpoint)
+        else:
+            url = "https://{0}:9440/PrismGateway/services/rest/v2.0{1}".format(self._base_url, endpoint)
 
         try:
             r = request_func(
@@ -148,13 +149,13 @@ class NutanixPrismConnector(BaseConnector):
 
         self.save_progress("Connecting to endpoint")
         # make rest call
-        ret_val, response = self._make_rest_call(':9440/PrismGateway/services/rest/v2.0/vms', action_result, params=None, headers=None)
+        ret_val, response = self._make_rest_call('/vms', action_result, params=None, headers=None)
 
         if (phantom.is_fail(ret_val)):
             # the call to the 3rd party device or service failed, action result should contain all the error details
             # for now the return is commented out, but after implementation, return from here
-            self.save_progress("Test Connectivity Failed.")
-            # return action_result.get_status()
+            self.save_progress("Test Connectivity Failed")
+            return action_result.get_status()
 
         # Return success
         self.save_progress("Test Connectivity Passed")
@@ -163,7 +164,6 @@ class NutanixPrismConnector(BaseConnector):
     def _handle_get_system_info(self, param):
 
         # Implement the handler here
-        # use self.save_progress(...) to send progress messages back to the platform
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
 
         # Add an action result object to self (BaseConnector) to represent the action for this param
@@ -178,22 +178,17 @@ class NutanixPrismConnector(BaseConnector):
         # optional_parameter = param.get('optional_parameter', 'default_value')
 
         # make rest call
-        ret_val, response = self._make_rest_call(':9440/PrismGateway/services/rest/v2.0/vms/' + vm_uuid, action_result, params=None, headers=None)
+        ret_val, response = self._make_rest_call('/vms/{0}'.format(vm_uuid), action_result, params=None, headers=None)
 
         if (phantom.is_fail(ret_val)):
             # the call to the 3rd party device or service failed, action result should contain all the error details
             # for now the return is commented out, but after implementation, return from here
-            # return action_result.get_status()
-            pass
+            return action_result.get_status()
 
         # Now post process the data,  uncomment code as you deem fit
 
         # Add the response into the data section
         action_result.add_data(response)
-
-        # Add a dictionary that is made up of the most important values from data into the summary
-        # summary = action_result.update_summary({})
-        # summary['num_data'] = len(action_result['data'])
 
         # Return success, no need to set the message, only the status
         # BaseConnector will create a textual message based off of the summary dictionary
@@ -208,31 +203,18 @@ class NutanixPrismConnector(BaseConnector):
         # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        # Access action parameters passed in the 'param' dictionary
-
-        # Required values can be accessed directly
-        # required_parameter = param['required_parameter']
-
-        # Optional values should use the .get() function
-        # optional_parameter = param.get('optional_parameter', 'default_value')
-
         # make rest call
-        ret_val, response = self._make_rest_call(':9440/PrismGateway/services/rest/v2.0/vms/?include_vm_nic_config=true', action_result, params=None, headers=None)
+        ret_val, response = self._make_rest_call('/vms/?include_vm_nic_config=true', action_result, params=None, headers=None)
 
         if (phantom.is_fail(ret_val)):
             # the call to the 3rd party device or service failed, action result should contain all the error details
             # for now the return is commented out, but after implementation, return from here
-            # return action_result.get_status()
-            pass
+            return action_result.get_status()
 
         # Now post process the data,  uncomment code as you deem fit
 
         # Add the response into the data section
         action_result.add_data(response)
-
-        # Add a dictionary that is made up of the most important values from data into the summary
-        # summary = action_result.update_summary({})
-        # summary['num_data'] = len(action_result['data'])
 
         # Return success, no need to set the message, only the status
         # BaseConnector will create a textual message based off of the summary dictionary
@@ -252,29 +234,25 @@ class NutanixPrismConnector(BaseConnector):
         # Required values can be accessed directly
         vm_uuid = param['vm_uuid']
         snapshot_uuid = param['snapshot_uuid']
-        
+
         json = {"snapshot_uuid": "%s" % snapshot_uuid}
 
         # Optional values should use the .get() function
         # optional_parameter = param.get('optional_parameter', 'default_value')
 
         # make rest call
-        ret_val, response = self._make_rest_call(':9440/PrismGateway/services/rest/v2.0/vms/' + vm_uuid + '/restore', action_result, params=None, headers=None, json=json, method="post")
+        ret_val, response = self._make_rest_call(
+                            '/vms/{0}/restore'.format(vm_uuid), action_result, params=None, headers=None, json=json, method="post")
 
         if (phantom.is_fail(ret_val)):
             # the call to the 3rd party device or service failed, action result should contain all the error details
             # for now the return is commented out, but after implementation, return from here
-            # return action_result.get_status()
-            pass
+            return action_result.get_status()
 
         # Now post process the data,  uncomment code as you deem fit
 
         # Add the response into the data section
         action_result.add_data(response)
-
-        # Add a dictionary that is made up of the most important values from data into the summary
-        # summary = action_result.update_summary({})
-        # summary['num_data'] = len(action_result['data'])
 
         # Return success, no need to set the message, only the status
         # BaseConnector will create a textual message based off of the summary dictionary
@@ -293,29 +271,24 @@ class NutanixPrismConnector(BaseConnector):
 
         # Required values can be accessed directly
         vm_uuid = param['vm_uuid']
-        
+
         json = {"snapshot_specs": [{"vm_uuid": "%s" % vm_uuid}]}
 
         # Optional values should use the .get() function
         # optional_parameter = param.get('optional_parameter', 'default_value')
 
         # make rest call
-        ret_val, response = self._make_rest_call(':9440/PrismGateway/services/rest/v2.0/snapshots', action_result, params=None, headers=None, json=json, method="post")
+        ret_val, response = self._make_rest_call('/snapshots', action_result, params=None, headers=None, json=json, method="post")
 
         if (phantom.is_fail(ret_val)):
             # the call to the 3rd party device or service failed, action result should contain all the error details
             # for now the return is commented out, but after implementation, return from here
-            # return action_result.get_status()
-            pass
+            return action_result.get_status()
 
         # Now post process the data,  uncomment code as you deem fit
 
         # Add the response into the data section
         action_result.add_data(response)
-
-        # Add a dictionary that is made up of the most important values from data into the summary
-        # summary = action_result.update_summary({})
-        # summary['num_data'] = len(action_result['data'])
 
         # Return success, no need to set the message, only the status
         # BaseConnector will create a textual message based off of the summary dictionary
@@ -334,29 +307,25 @@ class NutanixPrismConnector(BaseConnector):
 
         # Required values can be accessed directly
         vm_uuid = param['vm_uuid']
-        
+
         json = {"transition": "ON"}
 
         # Optional values should use the .get() function
         # optional_parameter = param.get('optional_parameter', 'default_value')
 
         # make rest call
-        ret_val, response = self._make_rest_call(':9440/PrismGateway/services/rest/v2.0/vms/' + vm_uuid + '/set_power_state' , action_result, params=None, headers=None, json=json, method="post")
+        ret_val, response = self._make_rest_call(
+                        '/vms/{0}/set_power_state'.format(vm_uuid), action_result, params=None, headers=None, json=json, method="post")
 
         if (phantom.is_fail(ret_val)):
             # the call to the 3rd party device or service failed, action result should contain all the error details
             # for now the return is commented out, but after implementation, return from here
-            # return action_result.get_status()
-            pass
+            return action_result.get_status()
 
         # Now post process the data,  uncomment code as you deem fit
 
         # Add the response into the data section
         action_result.add_data(response)
-
-        # Add a dictionary that is made up of the most important values from data into the summary
-        # summary = action_result.update_summary({})
-        # summary['num_data'] = len(action_result['data'])
 
         # Return success, no need to set the message, only the status
         # BaseConnector will create a textual message based off of the summary dictionary
@@ -375,29 +344,25 @@ class NutanixPrismConnector(BaseConnector):
 
         # Required values can be accessed directly
         vm_uuid = param['vm_uuid']
-        
+
         json = {"transition": "OFF"}
 
         # Optional values should use the .get() function
         # optional_parameter = param.get('optional_parameter', 'default_value')
 
         # make rest call
-        ret_val, response = self._make_rest_call(':9440/PrismGateway/services/rest/v2.0/vms/' + vm_uuid + '/set_power_state', action_result, params=None, headers=None, json=json, method="post")
+        ret_val, response = self._make_rest_call(
+                            '/vms/{0}/set_power_state'.format(vm_uuid), action_result, params=None, headers=None, json=json, method="post")
 
         if (phantom.is_fail(ret_val)):
             # the call to the 3rd party device or service failed, action result should contain all the error details
             # for now the return is commented out, but after implementation, return from here
-            # return action_result.get_status()
-            pass
+            return action_result.get_status()
 
         # Now post process the data,  uncomment code as you deem fit
 
         # Add the response into the data section
         action_result.add_data(response)
-
-        # Add a dictionary that is made up of the most important values from data into the summary
-        # summary = action_result.update_summary({})
-        # summary['num_data'] = len(action_result['data'])
 
         # Return success, no need to set the message, only the status
         # BaseConnector will create a textual message based off of the summary dictionary
@@ -416,29 +381,25 @@ class NutanixPrismConnector(BaseConnector):
 
         # Required values can be accessed directly
         vm_uuid = param['vm_uuid']
-        
+
         json = {"transition": "SUSPEND"}
 
         # Optional values should use the .get() function
         # optional_parameter = param.get('optional_parameter', 'default_value')
 
         # make rest call
-        ret_val, response = self._make_rest_call(':9440/PrismGateway/services/rest/v2.0/vms/' + vm_uuid + '/set_power_state' , action_result, params=None, headers=None, json=json, method="post")
+        ret_val, response = self._make_rest_call(
+                            '/vms/{0}/set_power_state'.format(vm_uuid), action_result, params=None, headers=None, json=json, method="post")
 
         if (phantom.is_fail(ret_val)):
             # the call to the 3rd party device or service failed, action result should contain all the error details
             # for now the return is commented out, but after implementation, return from here
-            # return action_result.get_status()
-            pass
+            return action_result.get_status()
 
         # Now post process the data,  uncomment code as you deem fit
 
         # Add the response into the data section
         action_result.add_data(response)
-
-        # Add a dictionary that is made up of the most important values from data into the summary
-        # summary = action_result.update_summary({})
-        # summary['num_data'] = len(action_result['data'])
 
         # Return success, no need to set the message, only the status
         # BaseConnector will create a textual message based off of the summary dictionary
@@ -462,22 +423,17 @@ class NutanixPrismConnector(BaseConnector):
         # optional_parameter = param.get('optional_parameter', 'default_value')
 
         # make rest call
-        ret_val, response = self._make_rest_call(':9440/PrismGateway/services/rest/v1/vms?searchString=' + search_string, action_result, params=None, headers=None)
+        ret_val, response = self._make_rest_call(':9440/PrismGateway/services/rest/v1/vms?searchString={0}'.format(search_string), action_result, params=None, headers=None)
 
         if (phantom.is_fail(ret_val)):
             # the call to the 3rd party device or service failed, action result should contain all the error details
             # for now the return is commented out, but after implementation, return from here
-            # return action_result.get_status()
-            pass
+            return action_result.get_status()
 
         # Now post process the data,  uncomment code as you deem fit
 
         # Add the response into the data section
         action_result.add_data(response)
-
-        # Add a dictionary that is made up of the most important values from data into the summary
-        # summary = action_result.update_summary({})
-        # summary['num_data'] = len(action_result['data'])
 
         # Return success, no need to set the message, only the status
         # BaseConnector will create a textual message based off of the summary dictionary
@@ -492,31 +448,18 @@ class NutanixPrismConnector(BaseConnector):
         # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        # Access action parameters passed in the 'param' dictionary
-
-        # Required values can be accessed directly
-        # required_parameter = param['required_parameter']
-
-        # Optional values should use the .get() function
-        # optional_parameter = param.get('optional_parameter', 'default_value')
-
         # make rest call
-        ret_val, response = self._make_rest_call(':9440/PrismGateway/services/rest/v2.0/snapshots', action_result, params=None, headers=None)
+        ret_val, response = self._make_rest_call('/snapshots', action_result, params=None, headers=None)
 
         if (phantom.is_fail(ret_val)):
             # the call to the 3rd party device or service failed, action result should contain all the error details
             # for now the return is commented out, but after implementation, return from here
-            # return action_result.get_status()
-            pass
+            return action_result.get_status()
 
         # Now post process the data,  uncomment code as you deem fit
 
         # Add the response into the data section
         action_result.add_data(response)
-
-        # Add a dictionary that is made up of the most important values from data into the summary
-        # summary = action_result.update_summary({})
-        # summary['num_data'] = len(action_result['data'])
 
         # Return success, no need to set the message, only the status
         # BaseConnector will create a textual message based off of the summary dictionary
@@ -540,22 +483,17 @@ class NutanixPrismConnector(BaseConnector):
         # optional_parameter = param.get('optional_parameter', 'default_value')
 
         # make rest call
-        ret_val, response = self._make_rest_call(':9440/PrismGateway/services/rest/v2.0/snapshots/' + snapshot_uuid, action_result, params=None, headers=None)
+        ret_val, response = self._make_rest_call('/snapshots/{0}'.format(snapshot_uuid), action_result, params=None, headers=None)
 
         if (phantom.is_fail(ret_val)):
             # the call to the 3rd party device or service failed, action result should contain all the error details
             # for now the return is commented out, but after implementation, return from here
-            # return action_result.get_status()
-            pass
+            return action_result.get_status()
 
         # Now post process the data,  uncomment code as you deem fit
 
         # Add the response into the data section
         action_result.add_data(response)
-
-        # Add a dictionary that is made up of the most important values from data into the summary
-        # summary = action_result.update_summary({})
-        # summary['num_data'] = len(action_result['data'])
 
         # Return success, no need to set the message, only the status
         # BaseConnector will create a textual message based off of the summary dictionary
@@ -614,17 +552,7 @@ class NutanixPrismConnector(BaseConnector):
         # get the asset config
         config = self.get_config()
 
-        """
-        # Access values in asset config by the name
-
-        # Required values can be accessed directly
-        required_config_name = config['required_config_name']
-
-        # Optional values should use the .get() function
-        optional_config_name = config.get('optional_config_name')
-        """
-
-        self._base_url = config.get('base_url')
+        self._base_url = config.get('base_url').strip('/')
 
         return phantom.APP_SUCCESS
 
@@ -661,9 +589,10 @@ if __name__ == '__main__':
         password = getpass.getpass("Password: ")
 
     if (username and password):
+        login_url = BaseConnector._get_phantom_base_url() + "login"
         try:
             print ("Accessing the Login page")
-            r = requests.get("https://127.0.0.1/login", verify=False)
+            r = requests.get(login_url, verify=False)
             csrftoken = r.cookies['csrftoken']
 
             data = dict()
@@ -673,10 +602,10 @@ if __name__ == '__main__':
 
             headers = dict()
             headers['Cookie'] = 'csrftoken=' + csrftoken
-            headers['Referer'] = 'https://127.0.0.1/login'
+            headers['Referer'] = login_url
 
             print ("Logging into Platform to get the session id")
-            r2 = requests.post("https://127.0.0.1/login", verify=False, data=data, headers=headers)
+            r2 = requests.post(login_url, verify=False, data=data, headers=headers)
             session_id = r2.cookies['sessionid']
         except Exception as e:
             print ("Unable to get session id from the platform. Error: " + str(e))
