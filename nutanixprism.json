@@ -1,0 +1,626 @@
+{
+    "appid": "19b1f9b5-d4a2-44b3-bf9d-bb708095e2f0",
+    "name": "Nutanix Prism",
+    "description": "This app implements the virtualization actions for Nutanix Prism",
+    "type": "virtualization",
+    "product_vendor": "Nutanix",
+    "logo": "logo_nutanixprism.svg",
+    "logo_dark": "logo_nutanixprism_dark.svg",
+    "product_name": "Prism",
+    "product_version_regex": ".*",
+    "publisher": "Nutanix",
+    "license": "Copyright (c) Nutanix, 2019",
+    "app_version": "1.0.0",
+    "utctime_updated": "2018-12-20T17:23:10.393966Z",
+    "package_name": "phantom_nutanixprism",
+    "main_module": "nutanixprism_connector.pyc",
+    "min_phantom_version": "4.0.1068",
+    "app_wizard_version": "1.0.0",
+    "configuration": {
+        "username": {
+            "description": "Admin Username",
+            "data_type": "string",
+            "required": true,
+            "order": 0
+        },
+        "password": {
+            "description": "Admin Password",
+            "data_type": "password",
+            "required": true,
+            "order": 1
+        },
+        "base_url": {
+            "description": "IP or Hostname of CVM",
+            "data_type": "string",
+            "required": true,
+            "order": 2
+        }
+    },
+    "actions": [
+        {
+            "action": "test connectivity",
+            "identifier": "test_connectivity",
+            "description": "Validate the asset configuration for connectivity using supplied configuration",
+            "type": "test",
+            "read_only": true,
+            "parameters": {},
+            "output": [],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get system info",
+            "identifier": "get_system_info",
+            "description": "Get information about a VM",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "vm_uuid": {
+                    "description": "UUID of VM to get info of",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "vm path",
+                        "uuid"
+                    ],
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.vm_uuid",
+                    "data_type": "string",
+                    "contains": [
+                        "vm path",
+                        "uuid"
+                    ],
+                    "column_name": "vm_uuid",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "list vms",
+            "identifier": "list_vms",
+            "description": "Get the list of registered VMs",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {},
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "revert vm",
+            "identifier": "revert_vm",
+            "description": "Revert VM to specified snapshot",
+            "type": "contain",
+            "read_only": false,
+            "parameters": {
+                "vm_uuid": {
+                    "description": "UUID of VM to restore",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "vm path",
+                        "uuid"
+                    ],
+                    "order": 0
+                },
+                "snapshot_uuid": {
+                    "description": "UUID of Snapshot",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "order": 1
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.vm_uuid",
+                    "data_type": "string",
+                    "contains": [
+                        "vm path",
+                        "uuid"
+                    ],
+                    "column_name": "vm_uuid",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.parameter.snapshot_uuid",
+                    "data_type": "string",
+                    "column_name": "snapshot_uuid",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "snapshot vm",
+            "identifier": "snapshot_vm",
+            "description": "Take a snapshot of the VM",
+            "type": "investigate",
+            "read_only": false,
+            "parameters": {
+                "vm_uuid": {
+                    "description": "UUID of VM to snapshot",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "vm path",
+                        "uuid"
+                    ],
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.vm_uuid",
+                    "data_type": "string",
+                    "contains": [
+                        "vm path",
+                        "uuid"
+                    ],
+                    "column_name": "vm_uuid",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "start vm",
+            "identifier": "start_vm",
+            "undo": "stop vm",
+            "description": "Start a stopped or suspended VM",
+            "type": "correct",
+            "read_only": false,
+            "parameters": {
+                "vm_uuid": {
+                    "description": "UUID of VM to start",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "vm path",
+                        "uuid"
+                    ],
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.vm_uuid",
+                    "data_type": "string",
+                    "contains": [
+                        "vm path",
+                        "uuid"
+                    ],
+                    "column_name": "vm_uuid",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "stop vm",
+            "identifier": "stop_vm",
+            "undo": "start vm",
+            "description": "Stop a VM",
+            "type": "contain",
+            "read_only": false,
+            "parameters": {
+                "vm_uuid": {
+                    "description": "UUID of VM to stop",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "vm path",
+                        "uuid"
+                    ],
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.vm_uuid",
+                    "data_type": "string",
+                    "contains": [
+                        "vm path",
+                        "uuid"
+                    ],
+                    "column_name": "vm_uuid",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "suspend vm",
+            "identifier": "suspend_vm",
+            "description": "Suspend a VM (Requires guest tools installed on vm)",
+            "type": "contain",
+            "read_only": false,
+            "parameters": {
+                "vm_uuid": {
+                    "description": "UUID of VM to suspend",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "vm path",
+                        "uuid"
+                    ],
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.vm_uuid",
+                    "data_type": "string",
+                    "contains": [
+                        "vm path",
+                        "uuid"
+                    ],
+                    "column_name": "vm_uuid",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "search vms",
+            "identifier": "search_vms",
+            "description": "Query VM's based on string",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "search_string": {
+                    "description": "Query VM's based on string",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.search_string",
+                    "data_type": "string",
+                    "column_name": "search_string",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "list snapshots",
+            "identifier": "list_snapshots",
+            "description": "List snapshots in a cluster",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {},
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get snapshot info",
+            "identifier": "get_snapshot_info",
+            "description": "Get information of a specific snapshot",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "snapshot_uuid": {
+                    "description": "UUID of Snapshot",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.snapshot_uuid",
+                    "data_type": "string",
+                    "column_name": "snapshot_uuid",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        }
+    ]
+}
